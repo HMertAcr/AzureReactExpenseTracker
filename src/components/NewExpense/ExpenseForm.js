@@ -33,7 +33,7 @@ const ExpenseForm = (props) => {
       title: userInput.title,
       amount: +userInput.amount,
       date: new Date(userInput.date),
-      id: crypto.randomUUID()
+      key: this.title + this.amount.toString() + Math.random().toString()
     };
 
     props.onSaveExpenseData(expenseData);
