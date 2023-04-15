@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./Expenses.css";
 import Card from "../UI/Card";
@@ -7,17 +7,23 @@ import ExpensesList from "./ExpensesList";
 import ExpensesChart from "./ExpensesChart";
 
 const Expenses = (props) => {
-  let years = ["2015", "2016", "2017", "2018", "2019", "2020"];
-
-  years = [
-    ...years,
+  let years = [
     ...props.items.map((expense) => expense.date.getFullYear().toString()),
   ]
     .filter((year, index, array) => array.indexOf(year) === index)
     .sort()
     .reverse();
 
-  const [filteredYear, setFiltered] = useState(years[0]);
+  const [filteredYear, setFiltered] = useState("");
+  const [yearsDisplayed, setYearsDisplayed] = useState(false);
+
+  //this feels like a hack, but it works
+  useEffect(() => {
+    if (years.length > 0 && !yearsDisplayed) {
+      setFiltered(years[0]);
+      setYearsDisplayed(true);
+    }
+  }, [years]);
 
   const filterChangeHandler = (selectedYear) => {
     setFiltered(selectedYear);
@@ -36,7 +42,10 @@ const Expenses = (props) => {
           onChangeFilter={filterChangeHandler}
         />
         <ExpensesChart expenses={filteredExpenses} />
-        <ExpensesList filter={filteredExpenses} onDelete={props.onRemoveExpense}/>
+        <ExpensesList
+          filter={filteredExpenses}
+          onDelete={props.onRemoveExpense}
+        />
       </Card>
     </div>
   );

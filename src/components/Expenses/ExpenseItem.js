@@ -17,7 +17,7 @@ const ExpenseItem = (props) => {
             <svg
               width={12}
               height={12}
-              viewPort="0 0 12 12"
+              viewport="0 0 12 12"
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -27,7 +27,7 @@ const ExpenseItem = (props) => {
                 x2="12"
                 y2="0"
                 stroke="white"
-                stroke-width="3"
+                strokeWidth="3"
               />
               <line
                 x1="0"
@@ -35,7 +35,7 @@ const ExpenseItem = (props) => {
                 x2="12"
                 y2="12"
                 stroke="white"
-                stroke-width="3"
+                strokeWidth="3"
               />
             </svg>
           </button>
