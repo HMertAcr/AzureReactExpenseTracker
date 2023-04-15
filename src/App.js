@@ -58,11 +58,17 @@ const App = () => {
     });
   };
 
+  const deleteExpenseHandler = (expenseKey) => {
+    setExpenses((prevExpenses) => {
+      return prevExpenses.filter((expense) => expense.key !== expenseKey);
+    });
+  };
+
   return (
     <div>
       <header>
         <NewExpense onAddExpense={addExpenseHandler} />
-        <Expenses items={expenses} />
+        <Expenses items={expenses} onRemoveExpense={deleteExpenseHandler}/>
       </header>
     </div>
   );

@@ -7,7 +7,7 @@ import ExpensesList from "./ExpensesList";
 import ExpensesChart from "./ExpensesChart";
 
 const Expenses = (props) => {
-  let years = ["2015", "2016", "2017", "2018", "2019"];
+  let years = ["2015", "2016", "2017", "2018", "2019", "2020"];
 
   years = [
     ...years,
@@ -36,7 +36,7 @@ const Expenses = (props) => {
           onChangeFilter={filterChangeHandler}
         />
         <ExpensesChart expenses={filteredExpenses} />
-        <ExpensesList filter={filteredExpenses} />
+        <ExpensesList filter={filteredExpenses} onDelete={props.onRemoveExpense}/>
       </Card>
     </div>
   );
