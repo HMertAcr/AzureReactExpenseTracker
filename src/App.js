@@ -15,6 +15,10 @@ const App = () => {
     } else {
       console.log("Wrong password");
       setDisabled(true);
+      setTimeout(() => {
+        setDisabled(false);
+      }
+      , 3000);
     }
   };
 

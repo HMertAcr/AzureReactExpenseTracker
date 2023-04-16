@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
+// import mysql from "mysql";
+// import fs from "fs";
 
 import Expenses from "./Expenses/Expenses";
 import NewExpense from "./NewExpense/NewExpense";
+
+// const config = {
+//   host: "expense-tracker-demo.mysql.database.azure.com",
+//   user: "expense_admin",
+//   password: "Berkay147258369",
+//   database: "quickstartdb",
+//   port: 3306,
+//   ssl: { ca: fs.readFileSync("public\BaltimoreCyberTrustRoot.crt.pem") },
+// };
 
 const DUMMY_EXPENSES = {
   admin: [
