@@ -3,121 +3,90 @@ import React, { useState, useEffect } from "react";
 import Expenses from "./Expenses/Expenses";
 import NewExpense from "./NewExpense/NewExpense";
 
-import { createUser, readData, insertData, deleteData } from "./MySqlConnection/db";
-
-const DUMMY_EXPENSES = {
-  admin: [
-    {
-      title: "Toilet Paper",
-      amount: 94,
-      date: new Date(2023, 7, 14),
-      key: Math.random().toString(),
-    },
-    {
-      title: "Car Insurance",
-      amount: 300,
-      date: new Date(2020, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "New Desk (Wooden)",
-      amount: 450,
-      date: new Date(2021, 5, 12),
-      key: Math.random().toString(),
-    },
-    {
-      title: "New TV",
-      amount: 700,
-      date: new Date(2022, 2, 28),
-      key: Math.random().toString(),
-    },
-    {
-      title: "Cybernetic Implants",
-      amount: 850,
-      date: new Date(2019, 5, 12),
-      key: Math.random().toString(),
-    },
-    {
-      title: "New Cat",
-      amount: 10,
-      date: new Date(2022, 2, 22),
-      key: Math.random().toString(),
-    },
-    {
-      title: "New Desk (Metal)",
-      amount: 500,
-      date: new Date(2021, 6, 13),
-      key: Math.random().toString(),
-    },
-    {
-      title: "New Computer",
-      amount: 900,
-      date: new Date(2020, 5, 24),
-      key: Math.random().toString(),
-    },
-  ],
-  user: [
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2015, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2016, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2017, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2018, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2019, 2, 18),
-      key: Math.random().toString(),
-    },
-    {
-      title: "user expense",
-      amount: 300,
-      date: new Date(2020, 2, 18),
-      key: Math.random().toString(),
-    },
-  ],
-};
-
 const MainPage = (props) => {
   const [expenses, setExpenses] = useState([]);
 
-  useEffect(() => {
-    if (props.user in DUMMY_EXPENSES) {
-      setExpenses(DUMMY_EXPENSES[props.user]);
+  const createUser = async (username) => {
+    const response = await fetch("http://localhost:3001/createUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: username }),
+    });
+    if (response.ok) {
+      console.log("User created");
+      return true;
     } else {
-      DUMMY_EXPENSES[props.user] = [];
-      setExpenses(DUMMY_EXPENSES[props.user]);
+      console.error(`Error creating user: ${response.statusText}`);
+      return false;
+    }
+  };
+
+  const readData = async (username) => {
+    const response = await fetch(`http://localhost:3001/readData/${username}`);
+    const rawData = await response.json();
+    if (response.ok) {
+      const data = rawData.map((item) => ({
+        ...item,
+        date: new Date(item.date),
+      }));
+      setExpenses(data);
+      console.log(data);
+    }
+  };
+
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      const userCreated = await createUser(props.user);
+      if (userCreated) {
+        await readData(props.user);
+      }
+    };
+    if (props.user !== "") {
+      fetchExpenses();
     }
   }, [props.user]);
 
-  const addExpenseHandler = (expense) => {
-    setExpenses((prevExpenses) => {
-      return [expense, ...prevExpenses];
+  const addExpenseHandler = async (expense) => {
+    const dateStr = expense.date.toISOString().split('T')[0]; // Convert the date to a MySQL-compatible date string
+    const response = await fetch("http://localhost:3001/insertData", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...expense, date: dateStr, username: props.user }),
     });
+
+    // if (response.ok) {
+    //   setExpenses((prevExpenses) => {
+    //     return [expense, ...prevExpenses];
+    //   });
+    // }
+    if (response.ok) {
+      console.log("Data inserted");
+      await readData(props.user);
+    }
   };
 
-  const deleteExpenseHandler = (expenseKey) => {
-    setExpenses((prevExpenses) => {
-      return prevExpenses.filter((expense) => expense.key !== expenseKey);
+  const deleteExpenseHandler = async (expenseKey) => {
+    const response = await fetch("http://localhost:3001/deleteData", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: props.user, id: expenseKey }),
     });
+
+    // if (response.ok) {
+    //   setExpenses((prevExpenses) => {
+    //     return prevExpenses.filter((expense) => expense.key !== expenseKey);
+    //   });
+    // }
+    if (response.ok) {
+      console.log("Data deleted");
+      await readData(props.user);
+    }
   };
 
   return (

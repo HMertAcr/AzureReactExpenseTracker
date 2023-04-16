@@ -13,8 +13,8 @@ const ExpensesList = (props) => {
             title={expense.title}
             amount={expense.amount}
             date={expense.date}
-            key={expense.key}
-            expenseKey={expense.key}
+            key={expense.id}
+            expenseKey={expense.id}
             onDelete={props.onDelete}
           />
         ))}

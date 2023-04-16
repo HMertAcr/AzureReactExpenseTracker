@@ -23,7 +23,7 @@ const Expenses = (props) => {
       setFiltered(years[0]);
       setYearsDisplayed(true);
     }
-  }, [years]);
+  }, [years, yearsDisplayed]);
 
   const filterChangeHandler = (selectedYear) => {
     setFiltered(selectedYear);
