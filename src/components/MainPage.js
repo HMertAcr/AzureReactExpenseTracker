@@ -37,19 +37,21 @@ const MainPage = (props) => {
   };
 
   useEffect(() => {
+
     const fetchExpenses = async () => {
       const userCreated = await createUser(props.user);
       if (userCreated) {
         await readData(props.user);
       }
     };
-    if (props.user !== "") {
+
+    if (props.user !== "" && props.user !== undefined && props.user !== null) {
       fetchExpenses();
     }
   }, [props.user]);
 
   const addExpenseHandler = async (expense) => {
-    const dateStr = expense.date.toISOString().split('T')[0]; // Convert the date to a MySQL-compatible date string
+    const dateStr = expense.date.toISOString().split("T")[0]; // Convert the date to a MySQL-compatible date string
     const response = await fetch("http://localhost:3001/insertData", {
       method: "POST",
       headers: {
@@ -58,11 +60,6 @@ const MainPage = (props) => {
       body: JSON.stringify({ ...expense, date: dateStr, username: props.user }),
     });
 
-    // if (response.ok) {
-    //   setExpenses((prevExpenses) => {
-    //     return [expense, ...prevExpenses];
-    //   });
-    // }
     if (response.ok) {
       console.log("Data inserted");
       await readData(props.user);
@@ -78,11 +75,6 @@ const MainPage = (props) => {
       body: JSON.stringify({ username: props.user, id: expenseKey }),
     });
 
-    // if (response.ok) {
-    //   setExpenses((prevExpenses) => {
-    //     return prevExpenses.filter((expense) => expense.key !== expenseKey);
-    //   });
-    // }
     if (response.ok) {
       console.log("Data deleted");
       await readData(props.user);
